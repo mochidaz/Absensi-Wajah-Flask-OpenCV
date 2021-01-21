@@ -4,7 +4,9 @@ from database import Database
 import numpy as np
 from utils import getImg, getNis, encode
 import sys
-
+from database import Database
+from datetime import datetime as dt
+db = Database()
 addr = sys.argv[1]
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -44,7 +46,6 @@ def upload_image():
 def detect_faces(file_stream):
     known_face = encode()[0]
     known_face_nis = encode()[1]
-    print(known_face_nis)
 
     img = face_recognition.load_image_file(file_stream)
     face_encodings = face_recognition.face_encodings(img)
@@ -61,6 +62,8 @@ def detect_faces(file_stream):
 
         matches = face_recognition.compare_faces(known_face, unknown_face_encodings)
         face_distances = face_recognition.face_distance(known_face, unknown_face_encodings)
+        print("matches: ", matches)
+        print("face_distances: ", face_distances)
 
         best_match_index = np.argmin(face_distances)
         if matches[best_match_index]:
@@ -68,9 +71,15 @@ def detect_faces(file_stream):
    
     result = {
         "wajah_ditemukan": face_found,
-        "NIS": nis
+        "NIS": nis,
+        "Nama": db.getNama(nis),
+        "Kelas": db.getKelas(nis)
     }
+    print("RESULT: ", result)
+
+
     return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(host=addr, port=5001, debug=True)

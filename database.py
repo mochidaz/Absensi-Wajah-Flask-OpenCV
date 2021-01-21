@@ -40,6 +40,11 @@ class Database:
         nama = self.cur.fetchall()
         return nama
 
+    def getKelas(self, nis):
+        self.cur.execute("SELECT kelas FROM siswa WHERE nis='{}'".format(nis))
+        nama = self.cur.fetchall()
+        return nama
+
     def getImage(self, nis):
         self.cur.execute("SELECT foto FROM siswa WHERE nis = {}".format(nis))
 
